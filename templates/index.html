@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>JourneyGuardian</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f4f7fb;
+    color:#172033;
+}
+
+header{
+    background:#101828;
+    color:white;
+    padding:18px 24px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
+
+.logo{
+    font-size:25px;
+    font-weight:800;
+}
+
+.logo span{
+    color:#5eead4;
+}
+
+.status{
+    font-size:13px;
+    background:#123c32;
+    color:#7fffd4;
+    padding:7px 12px;
+    border-radius:20px;
+}
+
+.container{
+    max-width:1400px;
+    margin:auto;
+    padding:22px;
+}
+
+.search-panel{
+    background:white;
+    border-radius:20px;
+    padding:20px;
+    box-shadow:0 8px 30px rgba(0,0,0,.08);
+}
+
+.search-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr auto;
+    gap:12px;
+}
+
+.input-box{
+    position:relative;
+}
+
+input{
+    width:100%;
+    padding:15px 16px;
+    border:1px solid #d8dee9;
+    border-radius:12px;
+    font-size:15px;
+    outline:none;
+}
+
+input:focus{
+    border-color:#4f46e5;
+}
+
+button{
+    border:0;
+    border-radius:12px;
+    padding:14px 20px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.primary{
+    background:#4f46e5;
+    color:white;
+}
+
+.location-btn{
+    margin-top:12px;
+    background:#eef2ff;
+    color:#3730a3;
+}
+
+.suggestions{
+    position:absolute;
+    left:0;
+    right:0;
+    top:55px;
+    background:white;
+    border-radius:12px;
+    box-shadow:0 10px 30px rgba(0,0,0,.15);
+    z-index:2000;
+    overflow:hidden;
+}
+
+.suggestion{
+    padding:13px;
+    cursor:pointer;
+    border-bottom:1px solid #eee;
+}
+
+.suggestion:hover{
+    background:#f4f4ff;
+}
+
+.layout{
+    display:grid;
+    grid-template-columns:330px 1fr;
+    gap:20px;
+    margin-top:20px;
+}
+
+.sidebar{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.card{
+    background:white;
+    border-radius:18px;
+    padding:18px;
+    box-shadow:0 6px 25px rgba(0,0,0,.07);
+}
+
+.card h3{
+    margin-bottom:14px;
+}
+
+.modes{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.mode{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    padding:13px;
+    border-radius:12px;
+    cursor:pointer;
+    text-align:left;
+}
+
+.mode:hover{
+    border-color:#4f46e5;
+}
+
+.mode.active{
+    background:#eef2ff;
+    border-color:#4f46e5;
+}
+
+.mode-icon{
+    font-size:22px;
+    display:block;
+    margin-bottom:5px;
+}
+
+.map{
+    min-height:600px;
+    background:
+        linear-gradient(45deg,#edf2f7 25%,transparent 25%),
+        linear-gradient(-45deg,#edf2f7 25%,transparent 25%),
+        linear-gradient(45deg,transparent 75%,#edf2f7 75%),
+        linear-gradient(-45deg,transparent 75%,#edf2f7 75%);
+    background-size:40px 40px;
+    background-position:0 0,0 20px,20px -20px,-20px 0;
+    border-radius:20px;
+    position:relative;
+    overflow:hidden;
+}
+
+.map-content{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.map-message{
+    background:white;
+    padding:25px;
+    border-radius:18px;
+    text-align:center;
+    box-shadow:0 8px 30px rgba(0,0,0,.12);
+}
+
+.route-line{
+    position:absolute;
+    width:65%;
+    height:8px;
+    background:#4f46e5;
+    transform:rotate(-15deg);
+    border-radius:10px;
+    box-shadow:0 0 15px rgba(79,70,229,.4);
+    display:none;
+}
+
+.marker{
+    position:absolute;
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    background:#ef4444;
+    border:4px solid white;
+    box-shadow:0 3px 10px rgba(0,0,0,.3);
+    display:none;
+}
+
+.marker.start{
+    left:18%;
+    top:65%;
+}
+
+.marker.end{
+    right:18%;
+    top:35%;
+}
+
+.info-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+
+.info{
+    background:#f8fafc;
+    padding:13px;
+    border-radius:12px;
+}
+
+.info strong{
+    display:block;
+    font-size:18px;
+    margin-top:5px;
+}
+
+.legend{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.legend-item{
+    font-size:12px;
+}
+
+.dot{
+    display:inline-block;
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    margin-right:4px;
+}
+
+.red{background:#ef4444}
+.orange{background:#f97316}
+.yellow{background:#eab308}
+.green{background:#22c55e}
+
+.results{
+    margin-top:20px;
+}
+
+.result{
+    background:white;
+    padding:15px;
+    border-radius:14px;
+    margin-bottom:10px;
+    border:1px solid #e5e7eb;
+}
+
+.result-title{
+    font-weight:800;
+}
+
+.small{
+    color:#667085;
+    font-size:13px;
+    margin-top:5px;
+}
+
+#loading{
+    display:none;
+    color:#4f46e5;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+@media(max-width:900px){
+
+    .layout{
+        grid-template-columns:1fr;
+    }
+
+    .search-grid{
+        grid-template-columns:1fr;
+    }
+
+    .map{
+        min-height:450px;
+    }
+}
+
+@media(max-width:600px){
+
+    header{
+        padding:15px;
+    }
+
+    .logo{
+        font-size:20px;
+    }
+
+    .container{
+        padding:12px;
+    }
+
+    .info-grid{
+        grid-template-columns:1fr;
+    }
+
+    .map{
+        min-height:400px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        Journey<span>Guardian</span>
+    </div>
+
+    <div class="status" id="status">
+        ● Connecting
+    </div>
+</header>
+
+<div class="container">
+
+    <div class="search-panel">
+
+        <div class="search-grid">
+
+            <div class="input-box">
+                <input
+                    id="from"
+                    placeholder="From — city, station, airport..."
+                    autocomplete="off"
+                >
+                <div id="fromSuggestions"
+                     class="suggestions"></div>
+            </div>
+
+            <div class="input-box">
+                <input
+                    id="to"
+                    placeholder="To — city, station, airport..."
+                    autocomplete="off"
+                >
+                <div id="toSuggestions"
+                     class="suggestions"></div>
+            </div>
+
+            <button
+                class="primary"
+                onclick="planJourney()">
+                Plan Journey
+            </button>
+
+        </div>
+
+        <button
+            class="location-btn"
+            onclick="useLocation()">
+            📍 Use My Current Location
+        </button>
+
+        <div id="loading">
+            Finding the best route...
+        </div>
+
+    </div>
+
+
+    <div class="layout">
+
+        <aside class="sidebar">
+
+            <div class="card">
+
+                <h3>Transport</h3>
+
+                <div class="modes">
+
+                    <button
+                        class="mode active"
+                        onclick="selectMode(this,'ALL')">
+                        <span class="mode-icon">🌍</span>
+                        All
+                    </button>
+
+                    <button
+                        class="mode"
+                        onclick="selectMode(this,'DRIVE')">
+                        <span class="mode-icon">🚗</span>
+                        Car
+                    </button>
+
+                    <button
+                        class="mode"
+                        onclick="selectMode(this,'WALK')">
+                        <span class="mode-icon">🚶</span>
+                        Walk
+                    </button>
+
+                    <button
+                        class="mode"
+                        onclick="selectMode(this,'TRAIN')">
+                        <span class="mode-icon">🚆</span>
+                        Train
+                    </button>
+
+                    <button
+                        class="mode"
+                        onclick="selectMode(this,'METRO')">
+                        <span class="mode-icon">🚇</span>
+                        Metro
+                    </button>
+
+                    <button
+                        class="mode"
+                        onclick="selectMode(this,'BUS')">
+                        <span class="mode-icon">🚌</span>
+                        Bus
+                    </button>
+
+                    <button
+                        class="mode"
+                        onclick="selectMode(this,'FERRY')">
+                        <span class="mode-icon">⛴️</span>
+                        Ferry
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Journey Summary</h3>
+
+                <div class="info-grid">
+
+                    <div class="info">
+                        Distance
+                        <strong id="distance">—</strong>
+                    </div>
+
+                    <div class="info">
+                        Time
+                        <strong id="duration">—</strong>
+                    </div>
+
+                    <div class="info">
+                        Mode
+                        <strong id="journeyMode">—</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Traffic</h3>
+
+                <div class="legend">
+
+                    <div class="legend-item">
+                        <span class="dot red"></span>
+                        Heavy
+                    </div>
+
+                    <div class="legend-item">
+                        <span class="dot orange"></span>
+                        Moderate
+                    </div>
+
+                    <div class="legend-item">
+                        <span class="dot yellow"></span>
+                        Light
+                    </div>
+
+                    <div class="legend-item">
+                        <span class="dot green"></span>
+                        Normal
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Route Options</h3>
+
+                <div id="results">
+                    Enter your starting point and destination.
+                </div>
+
+            </div>
+
+        </aside>
+
+
+        <main class="map" id="map">
+
+            <div class="route-line" id="routeLine"></div>
+
+            <div class="marker start" id="startMarker"></div>
+
+            <div class="marker end" id="endMarker"></div>
+
+            <div class="map-content" id="mapMessage">
+
+                <div class="map-message">
+
+                    <div style="font-size:45px">
+                        🗺️
+                    </div>
+
+                    <h2>JourneyGuardian</h2>
+
+                    <p style="margin-top:8px;color:#667085">
+                        Worldwide Journey Planner
+                    </p>
+
+                    <p style="margin-top:12px;font-size:13px;color:#667085">
+                        Enter From and To locations to begin.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let fromPlace = null;
+let toPlace = null;
+let selectedMode = "ALL";
+
+
+/* =========================================================
+   BACKEND STATUS
+========================================================= */
+
+async function checkBackend(){
+
+    try{
+
+        const response =
+            await fetch("/health");
+
+        if(!response.ok)
+            throw new Error();
+
+        const data =
+            await response.json();
+
+        document.getElementById("status").innerText =
+            "● Backend Online";
+
+    }catch(error){
+
+        document.getElementById("status").innerText =
+            "● Backend Offline";
+
+    }
+
+}
+
+checkBackend();
+
+
+/* =========================================================
+   PLACE SEARCH
+========================================================= */
+
+function setupSearch(inputId,suggestionId,isFrom){
+
+    const input =
+        document.getElementById(inputId);
+
+    const box =
+        document.getElementById(suggestionId);
+
+    let timer = null;
+
+    input.addEventListener("input",function(){
+
+        clearTimeout(timer);
+
+        const query =
+            input.value.trim();
+
+        if(query.length < 2){
+
+            box.innerHTML="";
+            return;
+
+        }
+
+        timer =
+            setTimeout(
+                () => searchPlaces(
+                    query,
+                    box,
+                    isFrom
+                ),
+                700
+            );
+
+    });
+
+}
+
+
+async function searchPlaces(
+    query,
+    box,
+    isFrom
+){
+
+    try{
+
+        const response =
+            await fetch(
+                "/search?q=" +
+                encodeURIComponent(query)
+            );
+
+        if(!response.ok)
+            throw new Error();
+
+        const places =
+            await response.json();
+
+        box.innerHTML="";
+
+        if(!places.length){
+
+            box.innerHTML =
+                `<div class="suggestion">
+                    No places found
+                </div>`;
+
+            return;
+
+        }
+
+        places.forEach(place => {
+
+            const item =
+                document.createElement("div");
+
+            item.className =
+                "suggestion";
+
+            item.innerHTML =
+                "📍 " + place.name;
+
+            item.onclick = function(){
+
+                if(isFrom){
+
+                    fromPlace = place;
+
+                    document.getElementById("from").value =
+                        place.name;
+
+                }else{
+
+                    toPlace = place;
+
+                    document.getElementById("to").value =
+                        place.name;
+
+                }
+
+                box.innerHTML="";
+
+            };
+
+            box.appendChild(item);
+
+        });
+
+    }catch(error){
+
+        box.innerHTML =
+            `<div class="suggestion">
+                Search unavailable
+            </div>`;
+
+    }
+
+}
+
+
+setupSearch(
+    "from",
+    "fromSuggestions",
+    true
+);
+
+setupSearch(
+    "to",
+    "toSuggestions",
+    false
+);
+
+
+/* =========================================================
+   CURRENT LOCATION
+========================================================= */
+
+function useLocation(){
+
+    if(!navigator.geolocation){
+
+        alert(
+            "Location is not supported by this browser."
+        );
+
+        return;
+
+    }
+
+    navigator.geolocation.getCurrentPosition(
+
+        position => {
+
+            fromPlace = {
+
+                name:"My Current Location",
+
+                lat:
+                    position.coords.latitude,
+
+                lon:
+                    position.coords.longitude
+
+            };
+
+            document.getElementById("from").value =
+                "📍 My Current Location";
+
+        },
+
+        () => {
+
+            alert(
+                "Please allow location access in your browser."
+            );
+
+        }
+
+    );
+
+}
+
+
+/* =========================================================
+   TRANSPORT MODE
+========================================================= */
+
+function selectMode(button,mode){
+
+    document
+        .querySelectorAll(".mode")
+        .forEach(
+            item =>
+                item.classList.remove("active")
+        );
+
+    button.classList.add("active");
+
+    selectedMode = mode;
+
+}
+
+
+/* =========================================================
+   PLAN JOURNEY
+========================================================= */
+
+async function planJourney(){
+
+    if(!fromPlace || !toPlace){
+
+        alert(
+            "Please select both From and To locations."
+        );
+
+        return;
+
+    }
+
+    document.getElementById("loading").style.display =
+        "block";
+
+    try{
+
+        if(
+            selectedMode === "WALK"
+        ){
+
+            await requestRoute(
+                "/walking-route",
+                "WALK"
+            );
+
+        }else if(
+            selectedMode === "DRIVE"
+        ){
+
+            await requestRoute(
+                "/driving-route",
+                "DRIVE"
+            );
+
+        }else{
+
+            /*
+             * ALL / TRAIN / METRO / BUS / FERRY
+             *
+             * These modes will be connected to the
+             * multimodal transit backend in the next stage.
+             */
+
+            await requestRoute(
+                "/driving-route",
+                "DRIVE"
+            );
+
+        }
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Unable to calculate this journey right now."
+        );
+
+    }
+
+    document.getElementById("loading").style.display =
+        "none";
+
+}
+
+
+/* =========================================================
+   ROUTE REQUEST
+========================================================= */
+
+async function requestRoute(
+    endpoint,
+    mode
+){
+
+    const response =
+        await fetch(
+            endpoint,
+            {
+
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:JSON.stringify({
+
+                    from_lat:
+                        fromPlace.lat,
+
+                    from_lon:
+                        fromPlace.lon,
+
+                    to_lat:
+                        toPlace.lat,
+
+                    to_lon:
+                        toPlace.lon
+
+                })
+
+            }
+        );
+
+    const data =
+        await response.json();
+
+    if(!response.ok){
+
+        throw new Error(
+            data.error ||
+            "Route failed"
+        );
+
+    }
+
+    showRoute(
+        data,
+        mode
+    );
+
+}
+
+
+/* =========================================================
+   SHOW ROUTE
+========================================================= */
+
+function showRoute(
+    data,
+    mode
+){
+
+    document.getElementById(
+        "distance"
+    ).innerText =
+        data.distance_km +
+        " km";
+
+    document.getElementById(
+        "duration"
+    ).innerText =
+        data.duration_min +
+        " min";
+
+    document.getElementById(
+        "journeyMode"
+    ).innerText =
+        mode;
+
+    document.getElementById(
+        "mapMessage"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "routeLine"
+    ).style.display =
+        "block";
+
+    document.getElementById(
+        "startMarker"
+    ).style.display =
+        "block";
+
+    document.getElementById(
+        "endMarker"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "results"
+    ).innerHTML = `
+
+        <div class="result">
+
+            <div class="result-title">
+                ${getModeIcon(mode)}
+                ${mode}
+            </div>
+
+            <div class="small">
+                ${data.distance_km} km
+                •
+                ${data.duration_min} minutes
+            </div>
+
+        </div>
+
+        <div class="result">
+
+            <div class="result-title">
+                🕒 Estimated Journey Time
+            </div>
+
+            <div class="small">
+                Current routing estimate
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+function getModeIcon(mode){
+
+    const icons = {
+
+        DRIVE:"🚗",
+
+        WALK:"🚶",
+
+        TRAIN:"🚆",
+
+        METRO:"🚇",
+
+        BUS:"🚌",
+
+        FERRY:"⛴️"
+
+    };
+
+    return icons[mode] || "🌍";
+
+}
+
+</script>
+
+</body>
+</html>
