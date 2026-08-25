@@ -4,10 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>JourneyGuardian</title>
+<title>JourneyGuardian — Worldwide Journey Planner</title>
 
-<link rel="stylesheet"
-href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<!-- Leaflet -->
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
 
 <style>
 
@@ -18,444 +21,205 @@ href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 body{
     margin:0;
     font-family:Arial,Helvetica,sans-serif;
-    background:#07111f;
-    color:white;
-    overflow:hidden;
+    background:#f4f7fb;
+    color:#172033;
 }
 
-/* ================= HEADER ================= */
-
-.header{
-    height:68px;
-    background:#091727;
-    border-bottom:1px solid #20364d;
+header{
+    background:#111827;
+    color:white;
+    padding:18px 24px;
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:0 22px;
-    position:relative;
-    z-index:1000;
 }
 
 .logo{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    font-size:21px;
+    font-size:22px;
     font-weight:800;
 }
 
-.logoBox{
-    width:40px;
-    height:40px;
-    border-radius:12px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:900;
-    background:linear-gradient(135deg,#4d8dff,#21d39b);
-}
-
-.online{
-    color:#62e5b5;
+.status{
     font-size:13px;
+    color:#34d399;
 }
-
-/* ================= LAYOUT ================= */
 
 .container{
-    height:calc(100vh - 68px);
-    display:flex;
-}
-
-.sidebar{
-    width:390px;
-    background:#0a192a;
-    border-right:1px solid #20364d;
+    max-width:1400px;
+    margin:auto;
     padding:20px;
-    overflow-y:auto;
-    z-index:500;
 }
 
-.mapArea{
-    flex:1;
-    position:relative;
+.search-panel{
+    background:white;
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 5px 25px rgba(0,0,0,.08);
+    margin-bottom:18px;
 }
 
-#map{
-    width:100%;
-    height:100%;
+.inputs{
+    display:grid;
+    grid-template-columns:1fr 1fr auto;
+    gap:12px;
 }
 
-/* ================= SIDEBAR ================= */
-
-.title{
-    font-size:27px;
-    font-weight:800;
-    margin-bottom:5px;
-}
-
-.subtitle{
-    color:#8fa4b9;
-    font-size:13px;
-    line-height:1.5;
-    margin-bottom:22px;
-}
-
-.label{
-    font-size:11px;
-    color:#8fa4b9;
-    text-transform:uppercase;
-    letter-spacing:1px;
-    margin-bottom:7px;
-}
-
-.inputBox{
-    margin-bottom:15px;
+.input-box{
     position:relative;
 }
 
 input{
     width:100%;
-    height:50px;
-    background:#071522;
-    border:1px solid #29435d;
-    border-radius:13px;
-    color:white;
-    padding:0 15px;
+    padding:15px;
+    border:1px solid #d6dce5;
+    border-radius:12px;
+    font-size:15px;
     outline:none;
-    font-size:14px;
 }
 
 input:focus{
-    border-color:#4d8dff;
-    box-shadow:0 0 0 3px rgba(77,141,255,.12);
+    border-color:#2563eb;
 }
 
-.locationRow{
-    display:flex;
-    gap:8px;
-}
-
-.locationBtn{
-    width:52px;
-    background:#152b43;
-    border:1px solid #29435d;
-    color:white;
-    border-radius:13px;
-    font-size:20px;
+button{
+    border:0;
+    border-radius:12px;
+    padding:0 20px;
+    font-weight:700;
     cursor:pointer;
+}
+
+.primary{
+    background:#2563eb;
+    color:white;
+}
+
+.location{
+    margin-top:12px;
+    background:#eef4ff;
+    color:#1d4ed8;
+    padding:10px 15px;
 }
 
 .suggestions{
     position:absolute;
+    top:55px;
     left:0;
     right:0;
-    top:78px;
-    background:#10243a;
-    border:1px solid #29435d;
-    border-radius:12px;
-    overflow:hidden;
+    background:white;
     z-index:2000;
+    border-radius:10px;
+    box-shadow:0 8px 25px rgba(0,0,0,.15);
+    overflow:hidden;
 }
 
 .suggestion{
-    padding:13px;
-    border-bottom:1px solid #223b52;
+    padding:12px;
     cursor:pointer;
-    font-size:13px;
+    border-bottom:1px solid #eee;
 }
 
 .suggestion:hover{
-    background:#173653;
+    background:#f1f5f9;
 }
 
-/* ================= BUTTONS ================= */
-
-.buttonRow{
+.controls{
     display:flex;
-    gap:10px;
-    margin-bottom:10px;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:15px;
 }
 
-button{
-    height:48px;
-    border:0;
-    border-radius:12px;
+.mode{
+    padding:10px 14px;
+    background:#f1f5f9;
+    border-radius:10px;
     cursor:pointer;
-    font-weight:bold;
-    color:white;
-}
-
-.secondary{
-    flex:1;
-    background:#152b43;
-    border:1px solid #29435d;
-}
-
-.primary{
-    width:100%;
-    background:#4d8dff;
-    font-size:15px;
-}
-
-/* ================= JOURNEY CARD ================= */
-
-.card{
-    margin-top:18px;
-    background:#0d2135;
-    border:1px solid #243e58;
-    border-radius:17px;
-    padding:15px;
-}
-
-.cardHeader{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:14px;
-}
-
-.cardTitle{
+    font-size:14px;
     font-weight:700;
 }
 
-.status{
-    font-size:10px;
-    padding:5px 9px;
-    border-radius:20px;
-    border:1px solid #31516e;
-    color:#9fb4c9;
+.mode.active{
+    background:#2563eb;
+    color:white;
 }
 
-.metrics{
+.map-card{
+    background:white;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 5px 25px rgba(0,0,0,.08);
+}
+
+#map{
+    width:100%;
+    height:620px;
+}
+
+.info{
+    padding:18px;
     display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:9px;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
 }
 
-.metric{
-    background:#081827;
-    border:1px solid #20384f;
+.info-card{
+    background:#f8fafc;
     border-radius:12px;
-    padding:12px;
+    padding:15px;
 }
 
-.metricLabel{
-    color:#849bb0;
-    font-size:10px;
-    text-transform:uppercase;
+.info-title{
+    font-size:12px;
+    color:#64748b;
+    margin-bottom:5px;
 }
 
-.metricValue{
-    margin-top:5px;
-    font-size:18px;
+.info-value{
+    font-size:20px;
     font-weight:800;
 }
 
-.trafficBar{
-    height:8px;
-    background:#203448;
-    border-radius:10px;
-    overflow:hidden;
-    margin-top:14px;
-}
-
-.trafficFill{
-    width:10%;
-    height:100%;
-    background:#21d39b;
-    transition:.5s;
-}
-
-.legend{
-    display:flex;
-    flex-wrap:wrap;
-    gap:12px;
+.message{
     margin-top:12px;
-    color:#8fa4b9;
-    font-size:10px;
-}
-
-.legendItem{
-    display:flex;
-    align-items:center;
-    gap:5px;
-}
-
-.color{
-    width:18px;
-    height:5px;
+    padding:12px;
     border-radius:10px;
+    background:#f8fafc;
+    color:#475569;
 }
-
-.green{background:#21d39b}
-.yellow{background:#ffd447}
-.orange{background:#ff9b3d}
-.red{background:#ff4d5e}
-
-.help{
-    margin-top:14px;
-    color:#71889f;
-    font-size:11px;
-    line-height:1.5;
-}
-
-/* ================= MAP CARD ================= */
-
-.mapInfo{
-    position:absolute;
-    top:18px;
-    right:18px;
-    z-index:400;
-    background:rgba(7,18,31,.92);
-    border:1px solid #29435d;
-    border-radius:13px;
-    padding:11px 14px;
-    backdrop-filter:blur(10px);
-}
-
-.mapInfoTitle{
-    font-weight:bold;
-    font-size:13px;
-}
-
-.mapInfoText{
-    color:#8fa4b9;
-    font-size:10px;
-    margin-top:3px;
-}
-
-/* ================= LOADING ================= */
-
-.loading{
-    display:none;
-    position:absolute;
-    inset:0;
-    background:rgba(3,10,18,.65);
-    z-index:3000;
-    align-items:center;
-    justify-content:center;
-}
-
-.loadingBox{
-    background:#10243a;
-    border:1px solid #34536f;
-    border-radius:16px;
-    padding:25px;
-    text-align:center;
-}
-
-.spinner{
-    width:30px;
-    height:30px;
-    border:3px solid #31506c;
-    border-top:3px solid #4d8dff;
-    border-radius:50%;
-    animation:spin 1s linear infinite;
-    margin:auto auto 12px;
-}
-
-@keyframes spin{
-    to{
-        transform:rotate(360deg);
-    }
-}
-
-/* ================= MOBILE ================= */
 
 @media(max-width:800px){
 
-    body{
-        overflow:hidden;
+    .inputs{
+        grid-template-columns:1fr;
     }
 
-    .header{
-        height:60px;
-        padding:0 13px;
+    .inputs button{
+        height:48px;
     }
 
-    .logo{
-        font-size:17px;
+    .info{
+        grid-template-columns:1fr 1fr;
     }
 
-    .logoBox{
-        width:34px;
-        height:34px;
+    #map{
+        height:500px;
     }
 
-    .online{
-        font-size:10px;
+}
+
+@media(max-width:500px){
+
+    header{
+        padding:15px;
     }
 
     .container{
-        height:calc(100vh - 60px);
-        display:block;
-        position:relative;
+        padding:10px;
     }
 
-    .mapArea{
-        position:absolute;
-        top:0;
-        left:0;
-        right:0;
-        height:57%;
-    }
-
-    .sidebar{
-        position:absolute;
-        left:0;
-        right:0;
-        bottom:0;
-        width:100%;
-        height:47%;
-        border-right:0;
-        border-top:1px solid #29435d;
-        border-radius:22px 22px 0 0;
-        padding:15px;
-        box-shadow:0 -15px 35px rgba(0,0,0,.5);
-    }
-
-    .title{
-        font-size:21px;
-    }
-
-    .subtitle{
-        margin-bottom:12px;
-    }
-
-    .inputBox{
-        margin-bottom:8px;
-    }
-
-    input{
-        height:44px;
-    }
-
-    .locationBtn{
-        height:44px;
-    }
-
-    .suggestions{
-        top:69px;
-    }
-
-    .card{
-        margin-top:10px;
-        padding:11px;
-    }
-
-    .metric{
-        padding:9px;
-    }
-
-    .metricValue{
-        font-size:15px;
-    }
-
-    .mapInfo{
-        top:10px;
-        right:10px;
+    .info{
+        grid-template-columns:1fr;
     }
 
 }
@@ -465,394 +229,173 @@ button{
 
 <body>
 
-<!-- ================= HEADER ================= -->
+<header>
 
-<div class="header">
-
-    <div class="logo">
-
-        <div class="logoBox">
-            JG
-        </div>
-
-        JourneyGuardian
-
-    </div>
-
-    <div class="online">
-        ● Worldwide routing online
-    </div>
-
+<div class="logo">
+🌍 JourneyGuardian
 </div>
 
+<div class="status">
+● Worldwide Journey Planner
+</div>
+
+</header>
 
 <div class="container">
 
+<div class="search-panel">
 
-<!-- ================= SIDEBAR ================= -->
+<div class="inputs">
 
-<div class="sidebar">
+<div class="input-box">
 
-    <div class="title">
-        Plan your journey
-    </div>
+<input
+id="fromInput"
+placeholder="From — city, station, airport..."
+autocomplete="off"
+/>
 
-    <div class="subtitle">
-        Search any location worldwide and calculate your journey with a traffic-aware route.
-    </div>
-
-
-    <!-- START -->
-
-    <div class="inputBox">
-
-        <div class="label">
-            Start location
-        </div>
-
-        <div class="locationRow">
-
-            <input
-                id="from"
-                placeholder="Search starting location"
-                autocomplete="off"
-            >
-
-            <button
-                class="locationBtn"
-                onclick="getCurrentLocation()"
-                title="Use current location"
-            >
-                ⌖
-            </button>
-
-        </div>
-
-        <div
-            id="fromSuggestions"
-            class="suggestions"
-            hidden
-        ></div>
-
-    </div>
-
-
-    <!-- DESTINATION -->
-
-    <div class="inputBox">
-
-        <div class="label">
-            Destination
-        </div>
-
-        <input
-            id="to"
-            placeholder="Search destination"
-            autocomplete="off"
-        >
-
-        <div
-            id="toSuggestions"
-            class="suggestions"
-            hidden
-        ></div>
-
-    </div>
-
-
-    <!-- BUTTONS -->
-
-    <div class="buttonRow">
-
-        <button
-            class="secondary"
-            onclick="swapLocations()"
-        >
-            ⇅ Swap
-        </button>
-
-        <button
-            class="secondary"
-            onclick="clearJourney()"
-        >
-            Clear
-        </button>
-
-    </div>
-
-
-    <button
-        class="primary"
-        onclick="calculateJourney()"
-    >
-        🚗 Calculate Journey
-    </button>
-
-
-    <!-- JOURNEY INFORMATION -->
-
-    <div class="card">
-
-        <div class="cardHeader">
-
-            <div class="cardTitle">
-                Journey estimate
-            </div>
-
-            <div
-                class="status"
-                id="routeStatus"
-            >
-                READY
-            </div>
-
-        </div>
-
-
-        <div class="metrics">
-
-            <div class="metric">
-
-                <div class="metricLabel">
-                    Distance
-                </div>
-
-                <div
-                    class="metricValue"
-                    id="distance"
-                >
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="metric">
-
-                <div class="metricLabel">
-                    Total time
-                </div>
-
-                <div
-                    class="metricValue"
-                    id="duration"
-                >
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="metric">
-
-                <div class="metricLabel">
-                    Traffic
-                </div>
-
-                <div
-                    class="metricValue"
-                    id="traffic"
-                >
-                    —
-                </div>
-
-            </div>
-
-
-            <div class="metric">
-
-                <div class="metricLabel">
-                    ETA
-                </div>
-
-                <div
-                    class="metricValue"
-                    id="eta"
-                >
-                    —
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="trafficBar">
-
-            <div
-                class="trafficFill"
-                id="trafficFill"
-            ></div>
-
-        </div>
-
-
-        <div class="legend">
-
-            <div class="legendItem">
-                <span class="color green"></span>
-                Free
-            </div>
-
-            <div class="legendItem">
-                <span class="color yellow"></span>
-                Moderate
-            </div>
-
-            <div class="legendItem">
-                <span class="color orange"></span>
-                Heavy
-            </div>
-
-            <div class="legendItem">
-                <span class="color red"></span>
-                Severe
-            </div>
-
-        </div>
-
-
-        <div class="help">
-
-            Route colours indicate traffic conditions.
-            Journey time is adjusted according to the estimated traffic level.
-
-        </div>
-
-    </div>
+<div id="fromSuggestions" class="suggestions"></div>
 
 </div>
 
+<div class="input-box">
 
-<!-- ================= MAP ================= -->
+<input
+id="toInput"
+placeholder="To — city, station, airport..."
+autocomplete="off"
+/>
 
-<div class="mapArea">
+<div id="toSuggestions" class="suggestions"></div>
 
-    <div id="map"></div>
+</div>
 
+<button class="primary" onclick="findRoute()">
+Find Route
+</button>
 
-    <div class="mapInfo">
+</div>
 
-        <div
-            class="mapInfoTitle"
-            id="mapTitle"
-        >
-            Worldwide Map
-        </div>
+<button class="location" onclick="useCurrentLocation()">
+📍 Use my current location
+</button>
 
-        <div
-            class="mapInfoText"
-            id="mapText"
-        >
-            Choose your start and destination
-        </div>
+<div class="controls">
 
-    </div>
+<div class="mode active" data-mode="DRIVE">
+🚗 Road
+</div>
 
+<div class="mode" data-mode="WALK">
+🚶 Walking
+</div>
 
-    <div
-        class="loading"
-        id="loading"
-    >
+<div class="mode" data-mode="TRAIN">
+🚆 Train
+</div>
 
-        <div class="loadingBox">
+<div class="mode" data-mode="METRO">
+🚇 Metro
+</div>
 
-            <div class="spinner"></div>
+<div class="mode" data-mode="BUS">
+🚌 Bus
+</div>
 
-            <b>
-                Building your route...
-            </b>
+<div class="mode" data-mode="FERRY">
+⛴️ Ferry
+</div>
 
-            <div
-                style="
-                margin-top:6px;
-                color:#8fa4b9;
-                font-size:11px;
-                "
-            >
-                Please wait
-            </div>
+</div>
 
-        </div>
+<div id="message" class="message">
+Enter your starting point and destination.
+</div>
 
-    </div>
+</div>
+
+<div class="map-card">
+
+<div id="map"></div>
+
+<div class="info">
+
+<div class="info-card">
+<div class="info-title">DISTANCE</div>
+<div id="distance" class="info-value">—</div>
+</div>
+
+<div class="info-card">
+<div class="info-title">ESTIMATED TIME</div>
+<div id="duration" class="info-value">—</div>
+</div>
+
+<div class="info-card">
+<div class="info-title">MODE</div>
+<div id="modeInfo" class="info-value">ROAD</div>
+</div>
+
+<div class="info-card">
+<div class="info-title">STATUS</div>
+<div id="routeStatus" class="info-value">READY</div>
+</div>
+
+</div>
 
 </div>
 
 </div>
 
-
+<!-- Leaflet -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 
 <script>
 
-/* ============================================================
+let map;
+
+let fromLocation = null;
+let toLocation = null;
+
+let routeLayer = null;
+
+let selectedMode = "DRIVE";
+
+
+/* ==========================================================
    MAP
-============================================================ */
+========================================================== */
 
-const map = L.map("map").setView(
-    [20,0],
-    2
+map = L.map("map").setView(
+    [20.5937,78.9629],
+    5
 );
-
 
 L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
         maxZoom:19,
-        attribution:"© OpenStreetMap contributors"
+        attribution:
+        '&copy; OpenStreetMap contributors'
     }
 ).addTo(map);
 
 
-L.control.zoom({
-    position:"bottomright"
-}).addTo(map);
-
-
-/* ============================================================
-   VARIABLES
-============================================================ */
-
-let fromPoint = null;
-
-let toPoint = null;
-
-let routeLayer = null;
-
-let markers = [];
-
-
-/* ============================================================
-   ELEMENTS
-============================================================ */
-
-const fromInput =
-    document.getElementById("from");
-
-const toInput =
-    document.getElementById("to");
-
-const fromSuggestions =
-    document.getElementById("fromSuggestions");
-
-const toSuggestions =
-    document.getElementById("toSuggestions");
-
-
-/* ============================================================
+/* ==========================================================
    SEARCH
-============================================================ */
+========================================================== */
 
-let searchTimer;
+let searchTimer = null;
 
 
-function setupSearch(
-    input,
-    box,
-    type
-){
+function setupSearch(inputId, suggestionsId, type){
+
+    const input =
+        document.getElementById(inputId);
+
+    const suggestions =
+        document.getElementById(suggestionsId);
+
 
     input.addEventListener(
         "input",
@@ -865,153 +408,114 @@ function setupSearch(
 
             if(query.length < 2){
 
-                box.hidden = true;
+                suggestions.innerHTML = "";
 
                 return;
-
             }
 
 
-            searchTimer =
-                setTimeout(
-                    async function(){
+            searchTimer = setTimeout(
+                async function(){
 
-                        try{
+                    try{
 
-                            const response =
-                                await fetch(
-                                    "/search?q=" +
-                                    encodeURIComponent(query)
-                                );
+                        const response =
+                            await fetch(
+                                "/search?q=" +
+                                encodeURIComponent(query)
+                            );
 
-
-                            if(!response.ok){
-
-                                throw new Error(
-                                    "Search failed"
-                                );
-
-                            }
+                        const data =
+                            await response.json();
 
 
-                            const places =
-                                await response.json();
+                        suggestions.innerHTML = "";
 
 
-                            box.innerHTML = "";
+                        if(!Array.isArray(data)){
+
+                            return;
+                        }
 
 
-                            if(
-                                !Array.isArray(places) ||
-                                places.length === 0
-                            ){
+                        data.forEach(
+                            function(place){
 
-                                box.hidden = true;
+                                const div =
+                                    document.createElement("div");
 
-                                return;
+                                div.className =
+                                    "suggestion";
 
-                            }
-
-
-                            places
-                            .slice(0,6)
-                            .forEach(
-                                function(place){
-
-                                    const item =
-                                        document.createElement(
-                                            "div"
-                                        );
-
-                                    item.className =
-                                        "suggestion";
-
-                                    item.textContent =
-                                        place.name;
+                                div.textContent =
+                                    place.name;
 
 
-                                    item.onclick =
-                                        function(){
+                                div.onclick =
+                                    function(){
 
-                                            input.value =
-                                                place.name;
+                                        input.value =
+                                            place.name;
 
-
-                                            const point = {
-
-                                                lat:
-                                                    Number(
-                                                        place.lat
-                                                    ),
-
-                                                lon:
-                                                    Number(
-                                                        place.lon
-                                                    ),
-
-                                                name:
-                                                    place.name
-
-                                            };
+                                        suggestions.innerHTML =
+                                            "";
 
 
-                                            if(
-                                                type === "from"
-                                            ){
+                                        const location = {
 
-                                                fromPoint =
-                                                    point;
+                                            lat:
+                                                Number(place.lat),
 
-                                            }
-                                            else{
+                                            lon:
+                                                Number(place.lon),
 
-                                                toPoint =
-                                                    point;
-
-                                            }
-
-
-                                            box.hidden =
-                                                true;
-
-
-                                            map.setView(
-                                                [
-                                                    point.lat,
-                                                    point.lon
-                                                ],
-                                                13
-                                            );
+                                            name:
+                                                place.name
 
                                         };
 
 
-                                    box.appendChild(
-                                        item
-                                    );
+                                        if(type === "from"){
 
-                                }
-                            );
+                                            fromLocation =
+                                                location;
+
+                                        }else{
+
+                                            toLocation =
+                                                location;
+
+                                        }
 
 
-                            box.hidden =
-                                false;
+                                        map.setView(
+                                            [
+                                                location.lat,
+                                                location.lon
+                                            ],
+                                            13
+                                        );
 
-                        }
-                        catch(error){
+                                    };
 
-                            console.error(
-                                error
-                            );
 
-                            box.hidden =
-                                true;
+                                suggestions.appendChild(div);
 
-                        }
+                            }
+                        );
 
-                    },
-                    500
-                );
+                    }catch(error){
+
+                        console.error(
+                            "Search error:",
+                            error
+                        );
+
+                    }
+
+                },
+                500
+            );
 
         }
     );
@@ -1020,35 +524,32 @@ function setupSearch(
 
 
 setupSearch(
-    fromInput,
-    fromSuggestions,
+    "fromInput",
+    "fromSuggestions",
     "from"
 );
 
 
 setupSearch(
-    toInput,
-    toSuggestions,
+    "toInput",
+    "toSuggestions",
     "to"
 );
 
 
-/* ============================================================
+/* ==========================================================
    CURRENT LOCATION
-============================================================ */
+========================================================== */
 
-function getCurrentLocation(){
+function useCurrentLocation(){
 
-    if(
-        !navigator.geolocation
-    ){
+    if(!navigator.geolocation){
 
         alert(
-            "Your browser does not support location."
+            "Location is not supported by this browser."
         );
 
         return;
-
     }
 
 
@@ -1056,7 +557,7 @@ function getCurrentLocation(){
 
         function(position){
 
-            fromPoint = {
+            fromLocation = {
 
                 lat:
                     position.coords.latitude,
@@ -1070,31 +571,41 @@ function getCurrentLocation(){
             };
 
 
-            fromInput.value =
+            document.getElementById(
+                "fromInput"
+            ).value =
                 "My current location";
 
 
             map.setView(
                 [
-                    fromPoint.lat,
-                    fromPoint.lon
+                    fromLocation.lat,
+                    fromLocation.lon
                 ],
-                14
+                15
             );
+
+
+            L.marker(
+                [
+                    fromLocation.lat,
+                    fromLocation.lon
+                ]
+            )
+            .addTo(map)
+            .bindPopup(
+                "📍 Your current location"
+            )
+            .openPopup();
 
         },
 
         function(){
 
             alert(
-                "Location permission was not available. Please search for your starting location."
+                "Unable to get your current location."
             );
 
-        },
-
-        {
-            enableHighAccuracy:true,
-            timeout:10000
         }
 
     );
@@ -1102,52 +613,93 @@ function getCurrentLocation(){
 }
 
 
-/* ============================================================
-   SWAP
-============================================================ */
+/* ==========================================================
+   MODE SELECT
+========================================================== */
 
-function swapLocations(){
+document
+.querySelectorAll(".mode")
+.forEach(
 
-    const oldText =
-        fromInput.value;
+    function(button){
 
-    fromInput.value =
-        toInput.value;
+        button.addEventListener(
+            "click",
+            function(){
 
-    toInput.value =
-        oldText;
-
-
-    const oldPoint =
-        fromPoint;
-
-    fromPoint =
-        toPoint;
-
-    toPoint =
-        oldPoint;
-
-}
+                document
+                .querySelectorAll(".mode")
+                .forEach(
+                    b =>
+                    b.classList.remove(
+                        "active"
+                    )
+                );
 
 
-/* ============================================================
-   CLEAR
-============================================================ */
-
-function clearJourney(){
-
-    fromInput.value =
-        "";
-
-    toInput.value =
-        "";
+                button.classList.add(
+                    "active"
+                );
 
 
-    fromPoint =
-        null;
+                selectedMode =
+                    button.dataset.mode;
 
-    toPoint =
-        null;
+
+                document.getElementById(
+                    "modeInfo"
+                ).textContent =
+                    button.textContent
+                    .replace(/[^\w\s]/gi,"")
+                    .trim()
+                    .toUpperCase();
+
+            }
+        );
+
+    }
+
+);
+
+
+/* ==========================================================
+   ROUTE
+========================================================== */
+
+async function findRoute(){
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    if(!fromLocation){
+
+        message.textContent =
+            "Please select a starting location.";
+
+        return;
+    }
+
+
+    if(!toLocation){
+
+        message.textContent =
+            "Please select a destination.";
+
+        return;
+    }
+
+
+    message.textContent =
+        "Finding the best route...";
+
+
+    document.getElementById(
+        "routeStatus"
+    ).textContent =
+        "LOADING";
 
 
     if(routeLayer){
@@ -1156,290 +708,49 @@ function clearJourney(){
             routeLayer
         );
 
-        routeLayer =
-            null;
+        routeLayer = null;
 
     }
-
-
-    markers.forEach(
-        function(marker){
-
-            map.removeLayer(
-                marker
-            );
-
-        }
-    );
-
-
-    markers =
-        [];
-
-
-    document.getElementById(
-        "distance"
-    ).textContent =
-        "—";
-
-
-    document.getElementById(
-        "duration"
-    ).textContent =
-        "—";
-
-
-    document.getElementById(
-        "traffic"
-    ).textContent =
-        "—";
-
-
-    document.getElementById(
-        "eta"
-    ).textContent =
-        "—";
-
-
-    document.getElementById(
-        "routeStatus"
-    ).textContent =
-        "READY";
-
-
-    document.getElementById(
-        "mapTitle"
-    ).textContent =
-        "Worldwide Map";
-
-
-    document.getElementById(
-        "mapText"
-    ).textContent =
-        "Choose your start and destination";
-
-
-    document.getElementById(
-        "trafficFill"
-    ).style.width =
-        "10%";
-
-}
-
-
-/* ============================================================
-   MARKER
-============================================================ */
-
-function addMarker(
-    point,
-    type
-){
-
-    const color =
-        type === "start"
-        ? "#21d39b"
-        : "#ff4d5e";
-
-
-    const icon =
-        L.divIcon({
-
-            className:"",
-
-            html:
-            `
-            <div style="
-                width:30px;
-                height:30px;
-                border-radius:50%;
-                background:${color};
-                border:4px solid white;
-                box-shadow:0 4px 15px #0008;
-            "></div>
-            `,
-
-            iconSize:[
-                30,
-                30
-            ],
-
-            iconAnchor:[
-                15,
-                15
-            ]
-
-        });
-
-
-    const marker =
-        L.marker(
-            [
-                point.lat,
-                point.lon
-            ],
-            {
-                icon:icon
-            }
-        )
-        .addTo(map);
-
-
-    marker.bindPopup(
-        type === "start"
-        ? "<b>START</b><br>" +
-          point.name
-        : "<b>DESTINATION</b><br>" +
-          point.name
-    );
-
-
-    markers.push(
-        marker
-    );
-
-}
-
-
-/* ============================================================
-   TRAFFIC ESTIMATE
-============================================================ */
-
-function getTraffic(){
-
-    const hour =
-        new Date().getHours();
-
-    const day =
-        new Date().getDay();
-
-
-    let score =
-        25 +
-        Math.random()*25;
-
-
-    const weekday =
-        day >= 1 &&
-        day <= 5;
-
-
-    if(
-        weekday &&
-        (
-            (hour >= 7 && hour <= 10) ||
-            (hour >= 16 && hour <= 20)
-        )
-    ){
-
-        score += 35;
-
-    }
-
-
-    if(
-        score < 30
-    ){
-
-        return {
-
-            name:"FREE",
-
-            multiplier:1.05,
-
-            color:"#21d39b",
-
-            width:"22%"
-
-        };
-
-    }
-
-
-    if(
-        score < 55
-    ){
-
-        return {
-
-            name:"MODERATE",
-
-            multiplier:1.18,
-
-            color:"#ffd447",
-
-            width:"48%"
-
-        };
-
-    }
-
-
-    if(
-        score < 75
-    ){
-
-        return {
-
-            name:"HEAVY",
-
-            multiplier:1.35,
-
-            color:"#ff9b3d",
-
-            width:"72%"
-
-        };
-
-    }
-
-
-    return {
-
-        name:"SEVERE",
-
-        multiplier:1.55,
-
-        color:"#ff4d5e",
-
-        width:"94%"
-
-    };
-
-}
-
-
-/* ============================================================
-   CALCULATE JOURNEY
-============================================================ */
-
-async function calculateJourney(){
-
-    if(
-        !fromPoint ||
-        !toPoint
-    ){
-
-        alert(
-            "Please select both the start location and destination from the search results."
-        );
-
-        return;
-
-    }
-
-
-    document.getElementById(
-        "loading"
-    ).style.display =
-        "flex";
 
 
     try{
 
+        let endpoint;
+
+
+        if(selectedMode === "WALK"){
+
+            endpoint =
+                "/walking-route";
+
+        }
+
+        else if(selectedMode === "DRIVE"){
+
+            endpoint =
+                "/driving-route";
+
+        }
+
+        else{
+
+            message.textContent =
+                selectedMode +
+                " route mapping will be added using transit data.";
+
+            document.getElementById(
+                "routeStatus"
+            ).textContent =
+                "TRANSIT";
+
+            return;
+
+        }
+
+
         const response =
             await fetch(
-                "/route",
+                endpoint,
                 {
 
                     method:"POST",
@@ -1449,20 +760,19 @@ async function calculateJourney(){
                             "application/json"
                     },
 
-                    body:
-                    JSON.stringify({
+                    body:JSON.stringify({
 
                         from_lat:
-                            fromPoint.lat,
+                            fromLocation.lat,
 
                         from_lon:
-                            fromPoint.lon,
+                            fromLocation.lon,
 
                         to_lat:
-                            toPoint.lat,
+                            toLocation.lat,
 
                         to_lon:
-                            toPoint.lon
+                            toLocation.lon
 
                     })
 
@@ -1474,10 +784,7 @@ async function calculateJourney(){
             await response.json();
 
 
-        if(
-            !response.ok ||
-            !data.geometry
-        ){
+        if(!response.ok){
 
             throw new Error(
                 data.error ||
@@ -1487,250 +794,170 @@ async function calculateJourney(){
         }
 
 
-        if(routeLayer){
-
-            map.removeLayer(
-                routeLayer
-            );
-
-        }
-
-
-        markers.forEach(
-            function(marker){
-
-                map.removeLayer(
-                    marker
-                );
-
-            }
-        );
-
-
-        markers =
-            [];
-
+        /* --------------------------------------------------
+           DRAW REAL ROUTE
+        -------------------------------------------------- */
 
         const coordinates =
             data.geometry.coordinates.map(
-                function(c){
-
-                    return [
-                        c[1],
-                        c[0]
-                    ];
-
-                }
+                point =>
+                [
+                    point[1],
+                    point[0]
+                ]
             );
 
 
         routeLayer =
-            L.layerGroup().addTo(
-                map
-            );
-
-
-        /*
-          Draw route in small segments.
-          Each segment gets a traffic colour.
-        */
-
-        for(
-            let i=0;
-            i<coordinates.length-1;
-            i++
-        ){
-
-            const traffic =
-                getTraffic();
-
-
             L.polyline(
-                [
-                    coordinates[i],
-                    coordinates[i+1]
-                ],
+                coordinates,
                 {
-
-                    color:
-                        traffic.color,
 
                     weight:7,
 
-                    opacity:.95,
+                    opacity:.9,
 
-                    lineCap:"round"
+                    color:
+                        selectedMode === "WALK"
+                        ? "#2563eb"
+                        : "#ef4444"
 
                 }
-            ).addTo(
-                routeLayer
-            );
-
-        }
-
-
-        addMarker(
-            fromPoint,
-            "start"
-        );
-
-
-        addMarker(
-            toPoint,
-            "end"
-        );
-
-
-        /*
-          Overall traffic estimate
-        */
-
-        const traffic =
-            getTraffic();
-
-
-        const totalMinutes =
-            Math.max(
-                1,
-                Math.round(
-                    data.duration_min *
-                    traffic.multiplier
-                )
-            );
-
-
-        document.getElementById(
-            "distance"
-        ).textContent =
-            Number(
-                data.distance_km
-            ).toFixed(1)
-            + " km";
-
-
-        document.getElementById(
-            "duration"
-        ).textContent =
-            totalMinutes +
-            " min";
-
-
-        document.getElementById(
-            "traffic"
-        ).textContent =
-            traffic.name;
-
-
-        document.getElementById(
-            "trafficFill"
-        ).style.width =
-            traffic.width;
-
-
-        document.getElementById(
-            "trafficFill"
-        ).style.background =
-            traffic.color;
-
-
-        document.getElementById(
-            "routeStatus"
-        ).textContent =
-            "ROUTE READY";
-
-
-        const eta =
-            new Date(
-                Date.now() +
-                totalMinutes *
-                60000
-            );
-
-
-        document.getElementById(
-            "eta"
-        ).textContent =
-            eta.toLocaleTimeString(
-                [],
-                {
-                    hour:"2-digit",
-                    minute:"2-digit"
-                }
-            );
-
-
-        document.getElementById(
-            "mapTitle"
-        ).textContent =
-            "Journey route";
-
-
-        document.getElementById(
-            "mapText"
-        ).textContent =
-            fromPoint.name +
-            " → " +
-            toPoint.name;
+            ).addTo(map);
 
 
         map.fitBounds(
             routeLayer.getBounds(),
             {
-                padding:[
-                    50,
-                    50
-                ]
+                padding:[40,40]
             }
         );
 
+
+        /* --------------------------------------------------
+           MARKERS
+        -------------------------------------------------- */
+
+        L.marker(
+            [
+                fromLocation.lat,
+                fromLocation.lon
+            ]
+        )
+        .addTo(map)
+        .bindPopup(
+            "START<br>" +
+            fromLocation.name
+        );
+
+
+        L.marker(
+            [
+                toLocation.lat,
+                toLocation.lon
+            ]
+        )
+        .addTo(map)
+        .bindPopup(
+            "DESTINATION<br>" +
+            toLocation.name
+        );
+
+
+        /* --------------------------------------------------
+           INFORMATION
+        -------------------------------------------------- */
+
+        document.getElementById(
+            "distance"
+        ).textContent =
+            data.distance_km +
+            " km";
+
+
+        document.getElementById(
+            "duration"
+        ).textContent =
+            formatDuration(
+                data.duration_min
+            );
+
+
+        document.getElementById(
+            "routeStatus"
+        ).textContent =
+            "FOUND";
+
+
+        message.textContent =
+            "Route successfully calculated.";
+
     }
+
     catch(error){
 
         console.error(
             error
         );
 
-        alert(
-            "Route could not be calculated. Make sure your Flask backend is running."
-        );
-
-    }
-    finally{
 
         document.getElementById(
-            "loading"
-        ).style.display =
-            "none";
+            "routeStatus"
+        ).textContent =
+            "ERROR";
+
+
+        message.textContent =
+            "Unable to calculate route: " +
+            error.message;
 
     }
 
 }
 
 
-/* ============================================================
-   CLOSE SEARCH BOXES
-============================================================ */
+/* ==========================================================
+   TIME
+========================================================== */
 
-document.addEventListener(
-    "click",
-    function(event){
+function formatDuration(minutes){
 
-        if(
-            !event.target.closest(
-                ".inputBox"
-            )
-        ){
+    minutes =
+        Number(minutes);
 
-            fromSuggestions.hidden =
-                true;
 
-            toSuggestions.hidden =
-                true;
+    if(minutes < 60){
 
-        }
+        return minutes +
+            " min";
 
     }
-);
+
+
+    const hours =
+        Math.floor(
+            minutes / 60
+        );
+
+
+    const mins =
+        minutes % 60;
+
+
+    if(mins === 0){
+
+        return hours +
+            " hr";
+
+    }
+
+
+    return hours +
+        " hr " +
+        mins +
+        " min";
+
+}
 
 </script>
 
